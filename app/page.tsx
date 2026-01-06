@@ -1,7 +1,13 @@
 "use client";
 import { useState } from 'react';
 import { Filesystem, Directory } from '@capacitor/filesystem';
-import { Capacitor } from '@capacitor/core';
+import { Capacitor, registerPlugin } from '@capacitor/core';
+
+interface FFmpegPlugin {
+  execute(options: { command: string }): Promise<{ code: number; message: string }>;
+}
+
+const FFmpegPlugin = registerPlugin<FFmpegPlugin>('FFmpegPlugin');
 
 export default function Home() {
   const [logs, setLogs] = useState<string[]>([]);
@@ -59,13 +65,6 @@ export default function Home() {
       const outPath = `${cacheDir}/result.mp4`;
 
       addLog("NATIVE MÜHƏRRİK ÇAĞIRILIR...");
-
-      // DİQQƏT: TypeScript yoxlamasını keçmək üçün 'as any'
-      const FFmpegPlugin = (Capacitor as any).Plugins.CapacitorFFmpeg;
-
-      if (!FFmpegPlugin) {
-        throw new Error("Plugin tapılmadı! Sync edildiyindən əmin olun.");
-      }
 
       const isGif = visualFile.type === 'image/gif';
       
