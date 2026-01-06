@@ -52,17 +52,17 @@ export default function Home() {
 
       addLog("NATIVE MÜHƏRRİK ÇAĞIRILIR...");
 
-      // DİQQƏT: Plugin-i birbaşa adı ilə çağırırıq
-      const FFmpegPlugin = Capacitor.Plugins.CapacitorFFmpeg as any;
+      // DİQQƏT: TypeScript xətasını keçmək üçün 'as any' istifadə edirik
+      const FFmpegPlugin = (Capacitor as any).Plugins.CapacitorFFmpeg;
 
       if (!FFmpegPlugin) {
-        throw new Error("Plugin hələ də tapılmadı! Sync edildiyindən əmin olun.");
+        throw new Error("Plugin tapılmadı! Sync edildiyindən əmin olun.");
       }
 
       const isGif = visualFile.type === 'image/gif';
       const cmd = isGif
         ? `-ignore_loop 0 -i ${vPath} -i ${aPath} -vf "fps=24,scale=trunc(iw/2)*2:720" -c:v libx264 -preset ultrafast -tune stillimage -shortest -y ${outPath}`
-        : `-loop 1 -i ${vPath} -i ${aPath} -vf "fps=24,scale=trunc(iw/2)*2:720" -c:v libx264 -preset ultrafast -tune stillimage -shortest -y ${outPath}`;
+        : `-loop 1 -i ${vPath} -i ${mp3Path} -vf "fps=24,scale=trunc(iw/2)*2:720" -c:v libx264 -preset ultrafast -tune stillimage -shortest -y ${outPath}`;
 
       addLog("RENDER BAŞLADI...");
       const result = await FFmpegPlugin.execute({ command: cmd });
@@ -83,10 +83,10 @@ export default function Home() {
   };
 
   return (
-    <main className="flex flex-col items-center justify-center min-h-screen p-4 bg-[#0a0f1a] text-white font-mono text-center">
+    <main className="flex flex-col items-center justify-center min-h-screen p-4 bg-[#0a0f1a] text-white font-mono">
       <div className="max-w-md w-full bg-[#161d2b] p-8 rounded-3xl border border-blue-500/20 shadow-2xl">
-        <h1 className="text-2xl font-black mb-1 text-blue-400 uppercase tracking-tighter italic">Native Engine</h1>
-        <p className="text-[9px] text-gray-500 mb-8 tracking-[5px] font-bold">TREND MUSIC PRODUCTION</p>
+        <h1 className="text-2xl font-black mb-1 text-blue-400 text-center uppercase tracking-tighter italic">Native Engine</h1>
+        <p className="text-[9px] text-gray-500 text-center mb-8 tracking-[5px] font-bold">TREND MUSIC PRODUCTION</p>
         
         <form onSubmit={processVideo} className="space-y-6">
           <input type="file" name="visual" accept="image/*" className="w-full text-xs bg-[#1f293a] p-3 rounded-xl border border-gray-700" />
@@ -96,16 +96,15 @@ export default function Home() {
           </button>
         </form>
 
-        <div className="mt-8 p-4 bg-black/40 rounded-2xl border border-blue-900/30">
-          <p className="text-[10px] text-blue-300 mb-2 font-bold uppercase underline">Sistem Logları:</p>
+        <div className="mt-8 p-4 bg-black/40 rounded-2xl border border-blue-900/30 min-h-[120px]">
+          <p className="text-[10px] text-blue-300 mb-2 font-bold uppercase underline tracking-tighter">Sistem Logları:</p>
           {logs.map((log, i) => <p key={i} className="text-[11px] text-green-400 mb-1 leading-tight">{log}</p>)}
-          {logs.length === 0 && <p className="text-[11px] text-gray-600 italic">Hazır...</p>}
         </div>
 
         {videoUrl && (
           <div className="mt-8 p-2 bg-[#1f293a] rounded-2xl border border-green-500/20">
             <video src={videoUrl} controls className="w-full rounded-xl" />
-            <a href={videoUrl} download="output.mp4" className="block text-center mt-4 bg-green-600 py-3 rounded-xl font-bold uppercase text-xs tracking-widest">Endir</a>
+            <a href={videoUrl} download="output.mp4" className="block text-center mt-4 bg-green-600 py-3 rounded-xl font-bold uppercase text-xs tracking-widest">Videonü Telefona Yaz</a>
           </div>
         )}
       </div>
